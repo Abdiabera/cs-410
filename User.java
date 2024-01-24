@@ -3,13 +3,7 @@ package cs410.webfilmz;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-/*
-        Author : Professor Ryan Culpepper
 
-        Student name : Abdi Abera
-        Subject: cs410
-        Date : 10/12/2023
-        */
 /* Represents a user (subscriber to the service), including
  * their watch/like history.
  * Responsible for maintaining watch/like history, expressing
@@ -23,15 +17,22 @@ public class User implements ILikeFilm {
      */
     private final Set<Film> watched;
     private final Set<Film> liked;
-
     private final Set<String> isLikedDirector;
-    private final Set <String> isLikedGenre;
+    private final Set<String> isLikedGenre;
+
+    // Maximum acceptable rating for recommendations.
+    private final Rating limitRating;
+
+    public User(Rating limitRating) {
+        this.watched = new HashSet<>();
+        this.liked = new HashSet<>();
+        this.limitRating = limitRating;
+        this.isLikedGenre = new HashSet<>();
+        this.isLikedDirector= new HashSet<>();
+    }
 
     public User() {
-        watched = new HashSet<>();
-        liked = new HashSet<>();
-        isLikedDirector= new HashSet<>();
-        isLikedGenre = new HashSet<>();
+        this(Rating.R);
     }
 
     // Record that the user watched/liked the given film,
@@ -41,6 +42,7 @@ public class User implements ILikeFilm {
             film.incrementWatched(1);
         }
     }
+//
     public void addLiked(Film film) {
         if (liked.add(film)) {
             film.incrementLiked(1);
@@ -49,75 +51,98 @@ public class User implements ILikeFilm {
         }
     }
 
-    public Set<Film> getRecommendationsByGenre(Catalog catalog){
+
+    public Set<Film> getRecommendationsByGenre(Catalog catalog) {
 
         Set<Film> recommendationBygenre = catalog.getRecommendationsByGenre(this);
         recommendationBygenre.removeIf(watched::contains);
         //return directorRecommendations;
         //return catalog.getRecommendationsByDirector(this);
+        recommendationBygenre.removeIf(film -> !film.rating().isAppropriateFor(limitRating));
         return recommendationBygenre;
     }
-
-
-   public Set<Film> RecommendationsNewReleases(Catalog catalog, int initialGenericRecsCount) {
+    public Set<Film> RecommendationsNewReleases(Catalog catalog, int initialGenericRecsCount) {
 
         Set<Film> newReleases = catalog.getRecommendationsByYear(initialGenericRecsCount);
-
         newReleases.removeAll(watched);
+
+        newReleases.removeIf(film -> !film.rating().isAppropriateFor(limitRating));
+
         return newReleases;
     }
-
+//updating each methods
     public Map<String, Set<Film>> getAllRecommendations(Catalog catalog, int initialGenericRecsCount) {
+
         //we have to filter wich already watched films
-        Set<Film> newReleases = catalog.getRecommendationsByYear(initialGenericRecsCount);
+        Set<Film> newReleases = RecommendationsNewReleases(catalog, initialGenericRecsCount);
         newReleases.removeIf(watched :: contains);
+        //this removes if the rating if their rating is not Appropriate
+        newReleases.removeIf(film -> !film.rating().isAppropriateFor(limitRating));
 
         Set<Film> favDirectors = getRecommendationsByDirector(catalog);
         favDirectors.removeIf(watched ::contains);
+        //this removes if the rating if their rating is not Appropriate
+        favDirectors.removeIf(film -> !film.rating().isAppropriateFor(limitRating));
 
         Set<Film> favGenres =catalog.getRecommendationsByGenre(this);
         favGenres.removeIf(watched :: contains);
+        //this removes  the rating if their rating is not Appropriate
+        favGenres.removeIf(film -> !film.rating().isAppropriateFor(limitRating));
 
         return Map.of(
                 "New Releases", newReleases,
                 // catalog.getRecommendationsByYear(initialGenericRecsCount)
-                     "Favorite Genre",favGenres,
-                 "Favorite Directors", favDirectors,
-                    // getRecommendationsByDirector(catalog)),
-                      "Most Watched",catalog.getRecommendationsMostWatched(initialGenericRecsCount),
-                  "Most Liked",catalog.getRecommendationsMostLiked(initialGenericRecsCount));
+                "Favorite Genres",favGenres,
+                "Favorite Directors", favDirectors,
+                // getRecommendationsByDirector(catalog)),
+                    "Most Watched",getRecommendationsMostWatched(catalog,initialGenericRecsCount),
+                "Most Liked",getRecommendationsMostLiked(catalog, initialGenericRecsCount));
     }
+
     public Set<Film> getRecommendationsByDirector(Catalog catalog) {
 
         Set<Film> directorRecommendations = catalog.getRecommendationsByDirector(this);
         directorRecommendations.removeIf(watched::contains);
         //return directorRecommendations;
         //return catalog.getRecommendationsByDirector(this);
+        //this removes if the rating if their rating is not Appropriate
+      directorRecommendations.removeIf(film -> !film.isAppropriateFor(limitRating));
         return directorRecommendations;
+        //public Set<Film> getRecommendationsByGenre(Catalog catalog)
+
+        // Do any of the films the user liked have the given
+        // director/genre?
     }
 
-    // public Set<Film> getRecommendationsByGenre(Catalog catalog)
+    private Set<Film> getRecommendationsMostLiked(Catalog catalog, int initialGenericRecsCount ){
+        Set<Film> mostliked = catalog.getRecommendationsMostLiked(initialGenericRecsCount);
+        mostliked.removeIf(film -> !film.isAppropriateFor(limitRating));
+        mostliked.removeIf(watched::contains);
+        return mostliked;
 
-    // Do any of the films
-    // the user liked have the given
-    // director/genre?
+    }
+    private Set<Film>  getRecommendationsMostWatched (Catalog catalog,int initialGenericRecsCount ){
+
+        Set<Film>  MostWatched= catalog.getRecommendationsMostWatched(initialGenericRecsCount);
+        MostWatched.removeIf(film -> !film.isAppropriateFor(limitRating));
+        MostWatched.removeIf(watched::contains);
+        return MostWatched;
+
+    }
+
+
+
     public boolean isLikedDirector(String director) {
         for (Film film : liked) {
             if (film.director().equals(director)) return true;
         }
-        return false;
+        return  false;
     }
+
     public boolean isLikedGenre(String genre) {
         for (Film film : liked) {
             if (film.genre().equals((genre))) return true;
         }
         return false;
-    }
-    private Set<Film> getWatched(){
-
-        return new HashSet<>(watched);
-    }
-    private Set<Film> getLiked(){
-        return new HashSet<>(liked);
     }
 }

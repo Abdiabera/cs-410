@@ -1,13 +1,5 @@
 package cs410.webfilmz;
-/*
 
-Author : Professor Ryan Culpepper
-
-fix some error by Abdi Abera as an homework
-Subject: cs410
-Date : 10/12/2023
-
- */
 /*
  *
  * DO NOT MAKE ANY CHANGES TO THIS FILE
@@ -20,7 +12,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BaseUserTest {
+class BaseUserTest {
 
     @Test
     void addWatchedAndLiked() {
@@ -62,7 +54,7 @@ public class BaseUserTest {
                 alice.getAllRecommendations(catalog, 3).get("New Releases"));
     }
 
-     @Test
+    @Test
     void getRecommendationsByDirector() {
         Catalog catalog = BaseCatalogTest.getCatalog();
         User alice = new User();
@@ -74,8 +66,6 @@ public class BaseUserTest {
                 alice.getRecommendationsByDirector(catalog));
     }
 
-
-
     @Test
     void isLikedDirector() {
         Catalog catalog = BaseCatalogTest.getCatalog();
@@ -85,5 +75,14 @@ public class BaseUserTest {
         alice.addLiked(amelie);
         assertTrue(alice.isLikedDirector("Jean-Pierre Jeunet"));
         assertFalse(alice.isLikedDirector("Ridley Scott"));
+    }
+
+    @Test
+    void testRatings() {
+        Catalog catalog = BaseCatalogTest.getCatalog();
+        User bobby = new User(Rating.G);
+
+        assertEquals(Set.of(catalog.findByTitle("Toy Story")),
+                bobby.getAllRecommendations(catalog, 10).get("New Releases"));
     }
 }

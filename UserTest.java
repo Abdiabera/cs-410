@@ -22,67 +22,116 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
- class UserTest {
+class UserTest {
 
-     @Test
-     void yourFirstTestCase() {
-         return;
-     }
-
-
-     @Test
-     void getRecommendationsNewReleases() {
-         Catalog catalog = BaseCatalogTest.getCatalog();
-
-         User alice = new User();
-         alice.addWatched(catalog.findByTitle("The Martian"));
-
-         Set<Film> expectedRecommendation =
-                 Set.of(
-                         catalog.findByTitle("Oppenheimer"),
-                         catalog.findByTitle("Inception"));
-
-         Set<Film> actualRecommendation = alice.getAllRecommendations(catalog, 3).get("New Releases");
-
-         assertTrue(actualRecommendation.containsAll(expectedRecommendation));
-         assertTrue(expectedRecommendation.containsAll(actualRecommendation));
+    @Test
+    void yourFirstTestCase() {
+        return;
+    }
 
 
-     }
+    @Test
+    void getRecommendationsNewReleases() {
+        Catalog catalog = BaseCatalogTest.getCatalog();
 
-     @Test
-     void getRecommendationsByDirector() {
-         Catalog catalog = BaseCatalogTest.getCatalog();
-         User alice = new User();
+        User alice = new User();
+        alice.addWatched(catalog.findByTitle("The Martian"));
 
-         Film amelie = catalog.findByTitle("Amelie");
-         alice.addWatched(amelie);
-         alice.addLiked(amelie);
+        Set<Film> expectedRecommendation =
+                Set.of(
+                        catalog.findByTitle("Oppenheimer"),
+                        catalog.findByTitle("Inception"));
 
-         // this used to create expected recommendation
-         Set<Film> expectedRecommendation = new HashSet<>();
-         expectedRecommendation.add(catalog.findByTitle("The City of Lost Children"));
+        Set<Film> actualRecommendation = alice.getAllRecommendations(catalog, 3).get("New Releases");
 
-         assertEquals(expectedRecommendation, alice.getRecommendationsByDirector(catalog));
+        assertTrue(actualRecommendation.containsAll(expectedRecommendation));
+        assertTrue(expectedRecommendation.containsAll(actualRecommendation));
 
-     }
+    }
+    @Test
+    void getRecommendationsNewReleasesRating() {
+        Catalog catalog = BaseCatalogTest.getCatalog();
 
-     @Test
-     void getRecommendationsByGenre() {
+        User alice = new User();
+        alice.addWatched(catalog.findByTitle("The Martian"));
 
-         Catalog catalog = BaseCatalogTest.getCatalog();
-         User alice = new User();
+        Set<Film> expectedRecommendation =
+                Set.of(
+                        catalog.findByTitle("Oppenheimer"),
+                        catalog.findByTitle("Inception"));
+        Set<Film> actualRecommendation = alice.getAllRecommendations(catalog, 3).get("New Releases");
+        assertTrue(actualRecommendation.containsAll(expectedRecommendation));
+        assertTrue(expectedRecommendation.containsAll(actualRecommendation));
 
-         Film amelie = catalog.findByTitle("Amelie");
-         alice.addWatched(amelie);
-         alice.addLiked(amelie);
+    }
+    @Test
+    void getRecommendationsByDirector() {
+        Catalog catalog = BaseCatalogTest.getCatalog();
 
-         // this used to create expected recommendation
-         Set<Film> expectedRecommendation = new HashSet<>();
-         expectedRecommendation.add(catalog.findByTitle("The Princess Bride"));
-         expectedRecommendation.add(catalog.findByTitle("Titanic"));
-         assertEquals(expectedRecommendation, alice.getRecommendationsByGenre(catalog));
+        User alice = new User();
+
+        Film amelie = catalog.findByTitle("Amelie");
+        alice.addWatched(amelie);
+        alice.addLiked(amelie);
+
+        // this used to create expected recommendation
+        Set<Film> expectedRecommendation = new HashSet<>();
+        expectedRecommendation.add(catalog.findByTitle("The City of Lost Children"));
+
+        assertEquals(expectedRecommendation, alice.getAllRecommendations(catalog,3).get("Favorite Directors"));
+    }
+    @Test
+    void getRecommendationsByDirectorRating() {
+        Catalog catalog = BaseCatalogTest.getCatalog();
+        User alice = new User();
+        Film amelie = catalog.findByTitle("Amelie");
+        alice.addWatched(amelie);
+        alice.addLiked(amelie);
+        // this used to create expected recommendation
+        Set<Film> expectedRecommendation = new HashSet<>();
+        expectedRecommendation.add(catalog.findByTitle("The City of Lost Children"));
+        assertEquals(expectedRecommendation, alice.getAllRecommendations(catalog,3).get("Favorite Directors"));
+    }
+    @Test
+    void getRecommendationsByGenre() {
+        Catalog catalog = BaseCatalogTest.getCatalog();
+        User alice = new User(Rating.PG13);
+        Film terminator = catalog.findByTitle("The Terminator");
+        alice.addWatched(terminator);
+        alice.addLiked(terminator);
+        // this used to create expected recommendation
+        Set<Film> expectedRecommendation = new HashSet<>();
+        expectedRecommendation.add(catalog.findByTitle("The Martian"));
+        expectedRecommendation.add(catalog.findByTitle("Inception"));
+        assertEquals(expectedRecommendation, alice.getAllRecommendations(catalog, 3).get("Favorite Genres"));
 
 
-     }
- }
+    }
+//method getRecommendationsByGenresRating
+    @Test
+    void getRecommendationsByGenresRating() {
+//an object of catalog
+        Catalog catalog = BaseCatalogTest.getCatalog();
+        //user
+        User alice = new User(Rating.PG13);
+        Film terminator = catalog.findByTitle("The Terminator");
+        alice.addWatched(terminator);
+        alice.addLiked(terminator);
+        // this used to create expected recommendation
+        Set<Film> expectedRecommendation = new HashSet<>();
+        //expectedRecommendation.add(catalog.findByTitle("The City of Lost Children"));
+        expectedRecommendation.add(catalog.findByTitle("The Martian"));
+        expectedRecommendation.add(catalog.findByTitle("Inception"));
+        assertEquals(expectedRecommendation, alice.getAllRecommendations(catalog,3).get("Favorite Genres"));
+    }
+        @Test
+    void testRatings() {
+        Catalog catalog = BaseCatalogTest.getCatalog();
+        User bobby = new User(Rating.G);
+
+        assertEquals(Set.of(catalog.findByTitle("Toy Story")),
+                bobby.getAllRecommendations(catalog, 10).get("New Releases"));
+    }
+}
+
+

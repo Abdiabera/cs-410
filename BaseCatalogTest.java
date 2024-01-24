@@ -1,13 +1,5 @@
 package cs410.webfilmz;
-/*
 
-        Author : Professor Ryan Culpepper
-
-        Student name : Abdi Abera
-        Subject: cs410
-        Date : 10/12/2023
-
-        */
 /*
  *
  * DO NOT MAKE ANY CHANGES TO THIS FILE
@@ -28,15 +20,16 @@ class BaseCatalogTest {
     // Makes a known small catalog for testing
     static Catalog getCatalog() {
         Catalog catalog = new Catalog();
-        catalog.add("The Terminator", "James Cameron", "SciFi", 1984);
-        catalog.add("The Princess Bride", "Rob Reiner", "Romance", 1987);
-        catalog.add("The City of Lost Children", "Jean-Pierre Jeunet", "SciFi", 1995);
-        catalog.add("Titanic", "James Cameron", "Romance", 1997);
-        catalog.add("Memento", "Christopher Nolan", "Thriller", 2000);
-        catalog.add("Amelie", "Jean-Pierre Jeunet", "Romance", 2001);
-        catalog.add("Inception", "Christopher Nolan", "SciFi", 2010);
-        catalog.add("The Martian", "Ridley Scott", "SciFi", 2015);
-        catalog.add("Oppenheimer", "Christopher Nolan", "Bio" ,2023);
+        catalog.add("The Terminator", "James Cameron", "SciFi", 1984, Rating.R);
+        catalog.add("The Princess Bride", "Rob Reiner", "Romance", 1987, Rating.PG);
+        catalog.add("The City of Lost Children", "Jean-Pierre Jeunet", "SciFi", 1995, Rating.R);
+        catalog.add("Toy Story", "John Lasseter", "Comedy", 1995, Rating.G);
+        catalog.add("Titanic", "James Cameron", "Romance", 1997, Rating.PG13);
+        catalog.add("Memento", "Christopher Nolan", "Thriller", 2000, Rating.R);
+        catalog.add("Amelie", "Jean-Pierre Jeunet", "Romance", 2001, Rating.R);
+        catalog.add("Inception", "Christopher Nolan", "SciFi", 2010, Rating.PG13);
+        catalog.add("The Martian", "Ridley Scott", "SciFi", 2015, Rating.PG13);
+        catalog.add("Oppenheimer", "Christopher Nolan", "Bio" ,2023, Rating.R);
         return catalog;
     }
 
@@ -101,13 +94,11 @@ class BaseCatalogTest {
                         new ILikeFilm() {
                             @Override
                             public boolean isLikedDirector(String director) {
-
                                 return likedDirector.equals(director);
                             }
 
                             @Override
-                            public boolean isLikedGenre(String genre)
-                            {
+                            public boolean isLikedGenre(String genre) {
                                 return false;
                             }
                         }

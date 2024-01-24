@@ -1,23 +1,15 @@
 package cs410.webfilmz;
-/*
 
-        Author : Professor Ryan Culpepper
-
-        Student name : Abdi Abera
-        Subject: cs410
-        Date : 10/12/2023
-
-        */
 /*
  *
  * DO NOT MAKE ANY CHANGES TO THIS FILE
  *
- * Additional Film tests are probably not necessary, but if you want
- * to make them, create a separate FilmTest.java file for them.
+ * Add your own tests to FilmTest.java.
  *
  */
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BaseFilmTest {
@@ -36,5 +28,17 @@ class BaseFilmTest {
         terminator.incrementLiked(10);
         assertEquals(14, terminator.totalWatched());
         assertEquals(11, terminator.totalLiked());
+    }
+
+    @Test
+    void testRating() {
+        Catalog catalog = BaseCatalogTest.getCatalog();
+        Film terminator = catalog.findByTitle("The Terminator"); // R
+        Film toystory = catalog.findByTitle("Toy Story"); // G
+        //
+        assertTrue(terminator.rating().isAppropriateFor(Rating.R));
+        assertFalse(terminator.rating().isAppropriateFor(Rating.PG13));
+        assertTrue(toystory.rating().isAppropriateFor(Rating.R));
+        assertTrue(toystory.rating().isAppropriateFor(Rating.G));
     }
 }

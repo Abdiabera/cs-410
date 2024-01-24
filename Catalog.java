@@ -1,15 +1,7 @@
 package cs410.webfilmz;
 
 import java.util.*;
-/*
 
-        Author : Professor Ryan Culpepper
-
-        Student name : Abdi Abera
-        Subject: cs410
-        Date : 10/12/2023
-
-        */
 /* Represents the catalog, the list of all available films.
  * Caches a mapping of director to the films they directed.
  * Responsible for adding new films; generating recommendations, both generic
@@ -33,8 +25,8 @@ public class Catalog {
 
     // Factory for films, ensures that new films are recorded in the catalog.
     public Film add(String title, String director, String genre,
-                    int releaseYear) {
-        Film newFilm = new Film(title, director, genre, releaseYear);
+                    int releaseYear, Rating rating) {
+        Film newFilm = new Film(title, director, genre, releaseYear, rating);
         allFilms.add(newFilm);
         Set<Film> otherFilms = byDirector.get(director);
         if (otherFilms == null) {
@@ -70,6 +62,17 @@ public class Catalog {
         return getRecommendationBySorting(count, comparator);
     }
 
+    public Set<Film> getRecommendationsByGenre(ILikeFilm user) {
+        Set<Film> recommendation = new HashSet<>();
+        for (Film film : allFilms) {
+
+            if (user.isLikedGenre(film.genre())) {
+                recommendation.add(film);
+
+            }
+        }
+        return recommendation;
+    }
 
     // Generalization of non-personalized recommendations by Film attributes.
     // The comparator should put best recommendations at the *start* of the list.
@@ -81,24 +84,9 @@ public class Catalog {
         return new HashSet<>(films);
     }
 
-
-
-    public Set<Film> getRecommendationsByGenre(ILikeFilm user){
-        Set<Film> recommendation = new HashSet<>();
-        for (Film film : allFilms){
-
-            if (user.isLikedGenre(film.genre())){
-                recommendation.add(film);
-
-            }
-        }
-        return recommendation;
-    }
-
     // Get all films by liked director/genre
     public Set<Film> getRecommendationsByDirector(ILikeFilm user) {
         Set<Film> recommendations = new HashSet<>();
-
         /*
         for (String director : byDirector.keySet()) {
             if (user.isLikedDirector(director)) {
@@ -106,7 +94,6 @@ public class Catalog {
             }
         }
         */
-
         for (Map.Entry<String, Set<Film>> entry : byDirector.entrySet()) {
             if (user.isLikedDirector(entry.getKey())) {
                 recommendations.addAll(entry.getValue());
